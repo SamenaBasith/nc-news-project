@@ -39,7 +39,6 @@ describe('GET /api/topics', () => {
         .expect(200)
         .then((res) => {
             const topics = res.body.topics
-            console.log(topics)
             expect(res.body.hasOwnProperty('topics')).toBe(true);
             expect(topics).toBeInstanceOf(Array)
             expect(topics).toHaveLength(3)
