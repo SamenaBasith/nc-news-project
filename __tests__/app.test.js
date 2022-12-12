@@ -9,16 +9,16 @@ afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
  //error1
-//  describe("404 error", () => {
-//  test('GET status404, error handling for invalid paths', () => {
-//     return request(app)
-//     .get(/api/banana)
-//     .expect(404)
-//     .then((res) => {
-//         expect(res.body.msg).toBe('invalid path')
-//     })
-//  })
-//  })
+ describe("404 error", () => {
+ test('GET status404, error handling for invalid paths', () => {
+    return request(app)
+    .get('/apz')
+    .expect(404)
+    .then((res) => {
+        expect(res.body.msg).toBe('invalid path')
+    })
+ })
+ })
 
 describe("GET /api", () => {
     test("status 200 responds with a success message", () => {
