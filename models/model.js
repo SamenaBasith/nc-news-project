@@ -60,3 +60,22 @@ AS comment_count
     return result.rows;
   });
 }
+
+
+exports.selectArticlesById = (article_id) => {
+
+let querySQL = 
+`SELECT * FROM articles 
+WHERE article_id = $1;`
+
+    return db.query(
+        querySQL,[article_id])
+   .then(({rows}) => {
+        if (rows.length === 0) {
+            return Promise.reject(
+                {status: 404, msg: "not found"})
+        } else { 
+            return rows[0];
+        }
+   })
+}
