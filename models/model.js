@@ -79,3 +79,16 @@ WHERE article_id = $1;`
         }
    })
 }
+
+
+exports.selectComments = (article_id) => {
+
+    let querySQL = `SELECT * FROM comments 
+    WHERE article_id=$1 
+    ORDER BY created_at DESC;`
+
+    return db.query( querySQL,[article_id])
+    .then(({rows}) => {
+         return rows;
+        });
+      };

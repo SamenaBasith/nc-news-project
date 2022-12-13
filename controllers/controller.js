@@ -1,4 +1,4 @@
-const {selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
+const {selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
 const app = require('../app.js')
 
 exports.getApi = (req, res) => {
@@ -33,3 +33,29 @@ exports.getApi = (req, res) => {
         next(err);
       });
     }
+
+    exports.getComments = (req, res, next) => {
+      const { article_id } = req.params;
+      const promises = [selectComments(article_id), selectArticlesById(article_id)];
+
+      Promise.all(promises)
+        .then((results) => {
+          res.status(200).send({ comments: results[0]});
+        })
+        .catch((err) => {
+          next(err);
+        });
+    };
+
+    // exports.getComments = (req, res, next) => {
+    //   const { article_id } = req.params;
+    //   const promises = [selectComments(article_id), selectArticlesById](article_id);
+
+    //   Promise.all(promises)
+    //     .then(([comments]) => {
+    //       res.status(200).send({ comments });
+    //     })
+    //     .catch((err) => {
+    //       next(err);
+    //     });
+    // };
