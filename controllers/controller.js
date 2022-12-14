@@ -54,7 +54,7 @@ exports.getApi = (req, res) => {
  
 
       addComment(article_id, username,body)
-        .then((newComment)=>{
+        .then((newComment) => {
           res.status(201).send({newComment});
         })
         .catch((err)=>{
