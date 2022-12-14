@@ -51,7 +51,7 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe("/api/articles", () => {
+describe("GET /api/articles", () => {
   test("GET status200 returns an array of article objects with these properties", () => {
     return request(app)
       .get("/api/articles")
@@ -113,7 +113,7 @@ test("error status400 if bad request given: when invalid order given ", () => {
 })
 
 
-describe("/api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
     test("GET status200 returns an article object corressponding to the article_id passed", () => {
       return request(app)
         .get("/api/articles/1")
@@ -151,6 +151,115 @@ describe("/api/articles/:article_id", () => {
 })
 
   
+describe("POST /api/articles/:article_id/comments", () => {
+    test.only("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
 
+      const newComment = {
+        username: "butter_bridge",
+        body: "post comment here for article_id 1"
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newComment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: "post comment here for article_id 1",
+              author: "butter_bridge",
+              article_id: 1,
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+
+//errors for invalid path
+    test("error status400: responds with a bad request message when passed a string for article_id invalid type", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "post comment here for article_id 1"
+          };
+        return request(app)
+          .post("/api/articles/banana/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("Bad request: invalid input");
+          });
+      });
+
+      test("error status404: responds with message not found when article_id that does not exist is passed", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "this comment cannot be posted"
+          };
+        return request(app)
+          .post("/api/articles/12345/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("not found");
+          });
+      });
+
+//error for invalid input type for username and body
+
+      test("error status400: responds with a bad request message when passed a number for username ", () => {
+        const newComment = {
+            username: 1,
+            body: "the username isnt right"
+          };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("Bad request: invalid input type");
+          });
+      });
+
+
+      test("error status400: responds with a bad request message when passed a number for body ", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: 123
+          };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("Bad request: invalid input type");
+          });
+      });
+
+      test("error status400: responds with a bad request message when username/body are empty", () => {
+        const newComment = {};
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("Bad request: no input");
+          });
+      });
+    });
+
+      test("error status404: responds with message not found when valid article_id is passed BUT username does not exist", () => {
+        const newComment = {
+          username: "samena",
+          body: "this comment cannot be posted",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("not found");
+          });
+      });
   
   
