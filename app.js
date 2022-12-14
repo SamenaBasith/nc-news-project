@@ -1,4 +1,5 @@
 const { postComment,getArticlesById,getArticles,getTopics, getApi } = require("./controllers/controller.js");
+const { getComments,getArticlesById,getArticles,getTopics, getApi } = require("./controllers/controller.js");
 const express = require("express");
 const app = express();
 
@@ -11,6 +12,8 @@ app.get("/api/articles/:article_id", getArticlesById);
 
 app.use(express.json());
 app.post("/api/articles/:article_id/comments", postComment)
+app.get("/api/articles/:article_id/comments", getComments);
+
 
 //error handling 404
 app.all("*", (req, res) => {

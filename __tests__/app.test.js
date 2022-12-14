@@ -261,5 +261,67 @@ describe("POST /api/articles/:article_id/comments", () => {
             expect(body.msg).toBe("not found");
           });
       });
+describe("GET /api/articles/:article_id/comments", () => {
+    test("status200: responds with an array of comments for a given article_id with these properties", () => {
+      return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((res) => {
+          const comments = res.body.comments
+          expect(comments).toHaveLength(11);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String)
+              })
+            );
+          });
+        });
+    });
+
+    test("status200: accept query, responds with an array of comments for a given article_id with the most recent comments first", () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then((res) => {
+              const comments = res.body.comments
+              expect(comments).toBeSortedBy('created_at',{descending:true})
+        })
+    })
+
+    test("status200: responds with an empty array when an article that exists has no comments",() => {
+        return request(app).get('/api/articles/4/comments')
+        .expect(200)
+        .then((res) => {
+            const comments = res.body.comments
+            expect(comments).toHaveLength(0)
+        })
+    })
+
+    test("error status400: responds with a bad request message when passed invalid article_id", () => {
+        return request(app)
+          .get("/api/articles/banana/comments")
+          .expect(400)
+          .then(({ body: {msg} }) => {
+            expect(msg).toBe("Bad Request: invalid input");
+        });
+    })
+
+
+    test("error status404: responds with a not found message when article does not exist", () => {
+    return request(app)
+      .get('/api/articles/123456/comments')
+      .expect(404)
+      .then(({ body: {msg} }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+})
+          
+
   
   
