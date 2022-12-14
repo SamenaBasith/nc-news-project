@@ -103,12 +103,14 @@ exports.addComment = (article_id, username, body) => {
              VALUES ($1, $2, $3)
              RETURNING *;`;
 
+
         return db
         .query(querySQL, input)
         .then((result) => {
           return result.rows[0];
         });
       };
+    
     
 
 

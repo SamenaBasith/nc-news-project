@@ -216,11 +216,11 @@ describe("GET /api/articles/:article_id/comments", () => {
 
   
 describe("POST /api/articles/:article_id/comments", () => {
-    test("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
+    test.only("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
 
       const newComment = {
         username: "butter_bridge",
-        body: "post comment here for article_id 1"
+        body: "this article is great!"
       };
       return request(app)
         .post("/api/articles/1/comments")
@@ -230,7 +230,7 @@ describe("POST /api/articles/:article_id/comments", () => {
           expect(body.newComment).toEqual(
             expect.objectContaining({
               comment_id: expect.any(Number),
-              body: "post comment here for article_id 1",
+              body: "this article is great!",
               author: "butter_bridge",
               article_id: 1,
               votes: expect.any(Number),
@@ -244,7 +244,7 @@ describe("POST /api/articles/:article_id/comments", () => {
     test("error status400: responds with a bad request message when passed a string for article_id invalid type", () => {
         const newComment = {
             username: "butter_bridge",
-            body: "post comment here for article_id 1"
+            body: "this article is great!"
           };
         return request(app)
           .post("/api/articles/banana/comments")
@@ -258,7 +258,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       test("error status404: responds with message not found when article_id that does not exist is passed", () => {
         const newComment = {
             username: "butter_bridge",
-            body: "this comment cannot be posted"
+            body: "tthis article is great!"
           };
         return request(app)
           .post("/api/articles/12345/comments")
@@ -274,7 +274,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       test("error status400: responds with a bad request message when passed a number for username ", () => {
         const newComment = {
             username: 1,
-            body: "the username isnt right"
+            body: "this article is great!"
           };
         return request(app)
           .post("/api/articles/1/comments")
@@ -298,17 +298,17 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
     });
 
-      test.only("error status404: responds with message not found when valid article_id is passed BUT username does not exist", () => {
+      test("error status404: responds with message not found when valid article_id is passed BUT username does not exist", () => {
         const newComment = {
           username: "samena",
-          body: "this comment cannot be posted",
+          body: "this article is great!",
         };
         return request(app)
           .post("/api/articles/1/comments")
           .send(newComment)
           .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("not found");
+          .then(({ body: {msg}}) => {
+            expect(msg).toBe("not found");
           });
       });
 
