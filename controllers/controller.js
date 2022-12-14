@@ -1,4 +1,4 @@
-const {addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
+const {selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
 const app = require('../app.js')
 
 exports.getApi = (req, res) => {
@@ -62,5 +62,21 @@ exports.getApi = (req, res) => {
         });
     };
 
+    exports.patchArticle = (req, res, next) => {
+   
+      
+      const {article_id} = req.params;
+      const { inc_votes } = req.body;
+  
+      
+      selectPatchedArticle(article_id, inc_votes)
+        .then((updatedArticle) => {
+          console.log(updatedArticle, 1)
+          res.status(200).send({ updatedArticle });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    };
 
     
