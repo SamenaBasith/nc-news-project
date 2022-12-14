@@ -80,32 +80,6 @@ WHERE article_id = $1;`
    })
 }
 
-exports.addComment = (article_id, username, body) => {
-
-
-    const input = [article_id, body, username]
-        const querySQL = 
-            `INSERT INTO comments 
-            (article_id, author, body)
-             VALUES ($1, $2, $3)
-             RETURNING *;`;
-
-    if (typeof username !== "string" || typeof body !== "string") {
-        return Promise.reject(
-          { status: 400, msg: "Bad request: invalid input type"})
-      } else if (username === null || body === null) {
-        return Promise.reject(
-        { status: 400, msg: "Bad request: no input"})
-        } else {
-
-        return db
-        .query(querySQL, input)
-        .then((result) => {
-          return result.rows[0];
-        });
-      };
-    }
-
 exports.selectComments = (article_id) => {
 
     let querySQL = `SELECT * FROM comments 
@@ -117,3 +91,24 @@ exports.selectComments = (article_id) => {
          return rows;
         });
       };
+
+
+exports.addComment = (article_id, username, body) => {
+
+
+    const input = [article_id, body, username]
+        const querySQL = 
+            `INSERT INTO comments 
+            (article_id, body, author)
+             VALUES ($1, $2, $3)
+             RETURNING *;`;
+
+        return db
+        .query(querySQL, input)
+        .then((result) => {
+          return result.rows[0];
+        });
+      };
+    
+
+

@@ -1,5 +1,4 @@
-const {addComment,selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
-const {selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
+const {addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
 const app = require('../app.js')
 
 exports.getApi = (req, res) => {
@@ -35,20 +34,7 @@ exports.getApi = (req, res) => {
       });
     }
 
-    exports.postComment = (req,res,next)=>{
-      const {article_id} = req.params;
-      const {username, body} = req.body;
-      console.log(req.body)
 
-      addComment(article_id, username,body)
-        .then((newComment)=>{
-          //console.log(newComment)
-          res.status(201).send({newComment});
-        })
-        .catch((err)=>{
-          next(err);
-        });
-    };
     exports.getComments = (req, res, next) => {
       const { article_id } = req.params;
       const promises = [selectComments(article_id), selectArticlesById(article_id)];
@@ -61,5 +47,20 @@ exports.getApi = (req, res) => {
           next(err);
         });
     };
+
+    exports.postComment = (req,res,next)=>{
+      const {article_id} = req.params;
+      const {username, body} = req.body;
+ 
+
+      addComment(article_id, username,body)
+        .then((newComment)=>{
+          res.status(201).send({newComment});
+        })
+        .catch((err)=>{
+          next(err);
+        });
+    };
+
 
     
