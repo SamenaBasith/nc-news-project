@@ -406,3 +406,21 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+
+describe("GET /api/users", () => {
+  test("status200: responds with an object with a key called users, and an array in that object with all the users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: {users} }) => {
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
