@@ -1,4 +1,4 @@
-const {selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
+const {selectUsers, selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
 const app = require('../app.js')
 
 exports.getApi = (req, res) => {
@@ -78,5 +78,15 @@ exports.getApi = (req, res) => {
           next(err);
         });
     };
+
+    exports.getUsers = (req, res) => {
+
+      selectUsers()
+      .then((users) => {
+        res.status(200).send({ users });
+        })
+      
+    };
+    
     
     

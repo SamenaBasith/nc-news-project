@@ -131,3 +131,16 @@ exports.addComment = (article_id, username, body) => {
       };
 
 
+
+      exports.selectUsers = () => {
+
+          return db 
+              .query(`SELECT * FROM users;`)
+              .then((result) => {
+                  return result.rows;
+              });
+      };
+
+      
+
+
