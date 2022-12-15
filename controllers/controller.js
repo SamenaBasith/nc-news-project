@@ -64,20 +64,31 @@ exports.getApi = (req, res) => {
 
     exports.patchArticle = (req, res, next) => {
   
-      
+    
       const {article_id} = req.params;
       const { inc_votes } = req.body;
   
-    
-      selectPatchedArticle(article_id, inc_votes)
+    selectPatchedArticle(article_id, inc_votes)
         .then((updatedArticle) => {
           res.status(202).send({ updatedArticle });
         })
+
+      
         .catch((err) => {
-          if(err.prop_name = "article_id")
-          console.log(err)
           next(err);
         });
     };
 
     
+    
+
+
+
+    // const promises = [selectArticlesById(article_id), inc_votes]
+
+    //     Promise.all(promises)
+    //     .then((promises) => {
+    //       return selectPatchedArticle(promises)
+    //     })
+    //     .then(article)
+    //     res.status(202).send({article})

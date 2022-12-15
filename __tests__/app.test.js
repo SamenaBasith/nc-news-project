@@ -325,6 +325,27 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
+  test("status202: responds with the accepted updated article object this time with a negative vote", () => {
+    const updatedVote = { inc_votes: -5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVote)
+      .expect(202)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 95,
+        });
+      });
+  });
+
+
+
   test("error status400: responds with a bad request message when passed an invalid type for inc_votes like a string", () => {
     const updatedVote = { inc_votes: "banana" };
     return request(app)
@@ -336,7 +357,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test.only("error status400: responds with a bad request message when passed an invalid article_id", () => {
+  test("error status400: responds with a bad request message when passed an invalid article_id", () => {
     const updatedVote = { inc_votes: 50 };
     return request(app)
       .patch("/api/articles/banana")
