@@ -111,6 +111,23 @@ exports.addComment = (article_id, username, body) => {
         });
       };
     
-    
+      exports.selectPatchedArticle = (article_id, inc_votes) => {
+  
+        const updatedVote = [inc_votes, article_id];
+        const querySQL = `
+              UPDATE articles 
+              SET votes = votes + $1 
+              WHERE article_id = $2 
+              RETURNING *;`;
+            
+      
+        return db.query(querySQL, updatedVote).then((result) => {
+          if (result.rowCount === 0) {
+            return Promise.reject( 
+              {status: 404, msg: "not found"} )
+        }
+          return result.rows[0];
+        });
+      };
 
 
