@@ -211,7 +211,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test.only("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
+  test("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
     const newComment = {
       username: "butter_bridge",
       body: "post comment here for article_id 1",
@@ -265,7 +265,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 
   //error for invalid input type for username and body
 
-  test("error status400: responds with a bad request message when passed a number for username ", () => {
+  test("error status404: responds with a not found message when passed a number for username ", () => {
     const newComment = {
       username: 1,
       body: "the username isnt right",
@@ -273,9 +273,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request: invalid input type");
+        expect(msg).toBe("not found");
       });
   });
 
@@ -306,14 +306,14 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("status200: responds with the updated article object", () => {
+  test("status202: responds with the accepted updated article object", () => {
     const updatedVote = { inc_votes: 50 };
     return request(app)
       .patch("/api/articles/1")
       .send(updatedVote)
-      .expect(200)
-      .then(({ body: { article } }) => {
-        expect(article).toEqual({
+      .expect(202)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
@@ -326,7 +326,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 
   test("error status400: responds with a bad request message when passed an invalid type for inc_votes like a string", () => {
-    const updatedVote = { inc_votes: banana };
+    const updatedVote = { inc_votes: "banana" };
     return request(app)
       .patch("/api/articles/1")
       .send(updatedVote)
@@ -336,7 +336,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("error status400: responds with a bad request message when passed an invalid article_id", () => {
+  test.only("error status400: responds with a bad request message when passed an invalid article_id", () => {
     const updatedVote = { inc_votes: 50 };
     return request(app)
       .patch("/api/articles/banana")
@@ -350,7 +350,7 @@ describe("PATCH /api/articles/:article_id", () => {
   test("error status404: responds with not found message when passed an article_id that does not exist", () => {
     const updatedVote = { inc_votes: 50 };
     return request(app)
-      .patch("/api/articles/12345")
+      .patch("/api/articles/2345")
       .send(updatedVote)
       .expect(404)
       .then(({ body: { msg } }) => {
@@ -358,3 +358,4 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+

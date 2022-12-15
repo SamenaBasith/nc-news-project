@@ -63,18 +63,19 @@ exports.getApi = (req, res) => {
     };
 
     exports.patchArticle = (req, res, next) => {
-   
+  
       
       const {article_id} = req.params;
       const { inc_votes } = req.body;
   
-      
+    
       selectPatchedArticle(article_id, inc_votes)
         .then((updatedArticle) => {
-          console.log(updatedArticle, 1)
-          res.status(200).send({ updatedArticle });
+          res.status(202).send({ updatedArticle });
         })
         .catch((err) => {
+          if(err.prop_name = "article_id")
+          console.log(err)
           next(err);
         });
     };

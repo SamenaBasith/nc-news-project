@@ -93,7 +93,8 @@ exports.addComment = (article_id, username, body) => {
 };
 
 
-exports.selectPatchedArticle = (inc_votes, article_id) => {
+exports.selectPatchedArticle = (article_id, inc_votes) => {
+  
   const updatedVote = [inc_votes, article_id];
   const querySQL = `
         UPDATE articles 
@@ -102,10 +103,7 @@ exports.selectPatchedArticle = (inc_votes, article_id) => {
         RETURNING *;`;
 
   return db.query(querySQL, updatedVote).then((result) => {
-    console.log(result.rows, 2);
-    // if (rows.length === 0) {
-    //   return Promise.reject({ status: 404, msg: "not found" });
-    // } else
+  
     return result.rows[0];
   });
 };
