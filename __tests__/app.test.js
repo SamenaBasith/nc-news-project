@@ -102,7 +102,7 @@ describe("GET /api/articles", () => {
       })
     })
     
-  test("status200 comment_count returns number of comments linked to each article", () => {
+  test("status200 accept QUERY comment_count returns number of comments linked to each article", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
