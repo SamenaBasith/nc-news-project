@@ -216,7 +216,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 
   
 describe("POST /api/articles/:article_id/comments", () => {
-    test.only("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
+    test("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
 
       const newComment = {
         username: "butter_bridge",
@@ -271,7 +271,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 
 //error for invalid input type for username and body
 
-      test("error status400: responds with a bad request message when passed a number for username ", () => {
+      test("error status404: responds with a not found message when passed a number for username ", () => {
         const newComment = {
             username: 1,
             body: "this article is great!"
@@ -279,9 +279,9 @@ describe("POST /api/articles/:article_id/comments", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send(newComment)
-          .expect(400)
+          .expect(404)
           .then(({ body: {msg} }) => {
-            expect(msg).toBe("Bad request: invalid input type");
+            expect(msg).toBe("not found");
           });
       });
 
