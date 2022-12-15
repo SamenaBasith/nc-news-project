@@ -296,7 +296,7 @@ describe("POST /api/articles/:article_id/comments", () => {
             expect(msg).toBe("Bad request: no input");
           });
       });
-    });
+ 
 
       test("error status404: responds with message not found when valid article_id is passed BUT username does not exist", () => {
         const newComment = {
@@ -312,3 +312,28 @@ describe("POST /api/articles/:article_id/comments", () => {
           });
       });
 
+      test("status201: just checking if the user passes in an extra vote key, it is ignored ", () => {
+        
+      const newComment = {
+        username: "butter_bridge",
+        body: "this article is great!",
+        votes: 200
+      };
+      return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newComment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: "this article is great!",
+            author: "butter_bridge",
+            article_id: 1,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+})
