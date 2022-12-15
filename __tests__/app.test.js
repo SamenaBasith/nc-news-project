@@ -49,7 +49,8 @@ describe("GET /api/topics", () => {
         });
       });
   });
-});
+})
+
 
 describe("GET /api/articles", () => {
   test("GET status200 returns an array of article objects with these properties", () => {
@@ -75,6 +76,32 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test("status200 QUERY accepted articles sorted by columns created_at defaulted by DESC order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=DESC")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("status200: accepts QUERY topics responds with an array of articles filtered by the topic value specified in the query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: {articles} }) => {
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "cats"
+            })
+          );
+        });
+      })
+    })
+    
   test("status200 comment_count returns number of comments linked to each article", () => {
     return request(app)
       .get("/api/articles")
@@ -85,23 +112,28 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("status200 query accepted articles sorted by columns created_at and DESC order", () => {
+
+  
+  //errors
+
+test("status404: responds with a not found message when a topic that doesnt exist is passed", () => {
+  return request(app)
+    .get("/api/articles?topic=banana")
+    .expect(404)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("not found");
+    });
+  })
+
+  test.only("status400 if bad request given: when invalid column given ", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at&order=DESC")
-      .expect(200)
-      .then((res) => {
-        const articles = res.body.articles;
-        expect(articles).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  test("status400 if bad request given: when invalid column given ", () => {
-    return request(app)
-      .get("/api/articles?sort_by=banana")
+      .get("/api/articles?sort_by=sausage")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request");
       });
   });
+
   test("error status400 if bad request given: when invalid order given ", () => {
     return request(app)
       .get("/api/articles?order=banana")
@@ -110,7 +142,8 @@ describe("GET /api/articles", () => {
         expect(msg).toBe("Bad Request");
       });
   });
-});
+})
+
 
 describe("GET /api/articles/:article_id", () => {
   test("GET status200 returns an article object corressponding to the article_id passed", () => {

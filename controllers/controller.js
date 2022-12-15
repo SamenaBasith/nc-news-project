@@ -1,5 +1,6 @@
 const {selectUsers, selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
-const app = require('../app.js')
+const app = require('../app.js');
+const { checkTopicExists } = require("../utility.js");
 
 exports.getApi = (req, res) => {
     res.status(200).send({ msg: "success" });
@@ -14,14 +15,32 @@ exports.getApi = (req, res) => {
 
   exports.getArticles = (req, res, next) => {
     const { sort_by, order, topic } = req.query;
-    selectArticles(sort_by, order, topic )
-    .then((articles) => {
+    const promises = [checkTopicExists(topic),
+       selectArticles(sort_by, order, topic)]
+
+    Promise.all(promises)
+    .then((result) => {
+    let articles = result[1]
         res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err)
     });
   }
+
+//     if(topic !== undefined)
+// promises.push(checkTopicExists (topic))
+
+// Promise.all(promises)
+// .then((topic) => {
+//   console.log(topic)
+// res.status(200).send({topic});
+// })
+// .catch((err) => next(err))
+// }
+  
+ 
+    
 
   exports.getArticlesById = (req, res, next) => {
     const { article_id } = req.params;

@@ -1,23 +1,26 @@
 const db = require("../db/connection.js");
+const {checkTopicExists} = require ("../utility.js")
 
 exports.selectTopics = () => {
+
   return db
   .query(`SELECT * FROM topics;`)
   .then((result) => {
     return result.rows;
   });
-};
+}
 
-exports.selectArticles = (sort_by = "created_at",
+
+exports.selectArticles = ( sort_by = "created_at",
 order = "DESC", topic) => {
+  
 let querySQL = 
 `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
 COUNT(comments.article_id) 
 AS comment_count
   FROM articles
   LEFT JOIN comments
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id`
+  ON articles.article_id = comments.article_id`
 
   const validColumns = [  
   "article_id",
@@ -27,16 +30,16 @@ AS comment_count
   "created_at",
   "votes"]
 
-  const validOrder=["asc", "ASC", "desc", "DESC"]
-
+  const validOrder = ["asc", "ASC", "desc", "DESC"]
   const queryValues = []
 
 
-  if (topic !== undefined) {
-    querySQL += ` WHERE topic = $1`;
+    if (topic !== undefined) {
+      querySQL += ` WHERE topic = $1`;
     queryValues.push(topic);
-  } 
-
+     }
+   querySQL += ` GROUP BY articles.article_id`;
+    
   if (validColumns.includes(sort_by)) {
     querySQL += ` ORDER BY ${sort_by}`;
     } else {
@@ -54,9 +57,13 @@ AS comment_count
         msg: "Bad Request",
       });
     }
+   
   return db
   .query(querySQL, queryValues)
   .then((result) => {
+    if (result.rows.length === 0){
+      checkTopicExists(topic)
+    }
     return result.rows;
   });
 }
