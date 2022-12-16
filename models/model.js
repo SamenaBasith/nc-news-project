@@ -11,6 +11,7 @@ exports.selectTopics = () => {
 }
 
 
+  
 exports.selectArticles = ( sort_by = "created_at",
 order = "DESC", topic) => {
   
@@ -67,6 +68,7 @@ AS comment_count
     return result.rows;
   });
 }
+
 
 
 exports.selectArticlesById = (article_id) => {

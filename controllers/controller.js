@@ -28,16 +28,23 @@ exports.getApi = (req, res) => {
     });
   }
 
-//     if(topic !== undefined)
-// promises.push(checkTopicExists (topic))
+  
+//   exports.getArticles = (req, res, next) =>{
+//     const {category, sort_by, order} = req.query;
+//     promises = [selectTopics(), topic, sort_by, order];
 
-// Promise.all(promises)
-// .then((topic) => {
-//   console.log(topic)
-// res.status(200).send({topic});
-// })
-// .catch((err) => next(err))
+//     Promise.all(promises)
+//     .then((promises)=>{
+//         return selectArticles(promises);
+//     })
+//     .then((articles)=>{
+//         res.status(200).send({articles});
+//     })
+//     .catch((err)=>{
+//         next(err);
+//     })
 // }
+
   
  
     

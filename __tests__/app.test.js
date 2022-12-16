@@ -52,7 +52,7 @@ describe("GET /api/topics", () => {
 })
 
 
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   test("GET status200 returns an array of article objects with these properties", () => {
     return request(app)
       .get("/api/articles")

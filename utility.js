@@ -1,5 +1,6 @@
 const db = require("./db/connection.js");
 
+
 exports.checkTopicExists = (topic) => {
     let querySQL = `SELECT * FROM topics
     WHERE slug = $1;`
