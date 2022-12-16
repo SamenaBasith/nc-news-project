@@ -1,4 +1,4 @@
-const { getUsers,patchArticle, postComment,getComments,getArticlesById,getArticles,getTopics, getApi } = require("./controllers/controller.js");
+const { deleteComment, getUsers,patchArticle, postComment,getComments,getArticlesById,getArticles,getTopics, getApi } = require("./controllers/controller.js");
 const { PSQLErrorHandler, errorHandler404, customErrorHandler, errorHandler500} = require("./controllers/errors.controllers.js");
 
 const express = require("express");
@@ -15,6 +15,7 @@ app.get("/api/users", getUsers);
 app.use(express.json());
 app.post("/api/articles/:article_id/comments", postComment)
 app.patch("/api/articles/:article_id", patchArticle);
+app.delete("/api/comments/:comment_id", deleteComment);
 
 //error handling 404
 app.all("*", errorHandler404)

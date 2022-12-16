@@ -210,31 +210,29 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 
   test("status201: just checking if the user passes in an extra vote key, it is ignored ", () => {
-        
     const newComment = {
       username: "butter_bridge",
       body: "this article is great!",
-      votes: 200
+      votes: 200,
     };
     return request(app)
-    .post("/api/articles/1/comments")
-    .send(newComment)
-    .expect(201)
-    .then(({ body }) => {
-      expect(body.newComment).toEqual(
-        expect.objectContaining({
-          comment_id: expect.any(Number),
-          body: "this article is great!",
-          author: "butter_bridge",
-          article_id: 1,
-          votes: expect.any(Number),
-          created_at: expect.any(String),
-        })
-      );
-    });
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newComment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: "this article is great!",
+            author: "butter_bridge",
+            article_id: 1,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
 });
-})
-
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
@@ -370,8 +368,6 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-
-
   test("error status400: responds with a bad request message when passed an invalid type for inc_votes like a string", () => {
     const updatedVote = { inc_votes: "banana" };
     return request(app)
@@ -406,13 +402,12 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-
 describe("GET /api/users", () => {
   test("status200: responds with an object with a key called users, and an array in that object with all the users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({ body: {users} }) => {
+      .then(({ body: { users } }) => {
         expect(users).toHaveLength(4);
         users.forEach((user) => {
           expect(user).toMatchObject({
@@ -421,6 +416,54 @@ describe("GET /api/users", () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("status204: responds with no content when passed existing and valid comment_id", () => {
+    return request(app)
+    .delete("/api/comments/1").
+    expect(204);
+  });
+
+  test("status204: checking that number of comments for that comment_id decreases using a GET request", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((res) => {
+        const comments = res.body.comments
+        expect(comments).toHaveLength(11);
+
+        return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+      })
+      .then(() => {
+        return request(app)
+        .get("/api/articles/1/comments");
+      })
+      .then((res) => {
+        const commentsAfterDeletion = res.body.comments
+        expect(commentsAfterDeletion).toHaveLength(10);
+      });
+  });
+
+  test("error status400: responds with bad request message when passed invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: invalid input");
+      });
+  });
+
+  test("error status404: responds with not found message when passed non existing comment_id but valid data type", () => {
+    return request(app)
+      .delete("/api/comments/12345")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
       });
   });
 });
