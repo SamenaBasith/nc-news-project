@@ -93,8 +93,8 @@ exports.getApi = (req, res) => {
       const { comment_id } = req.params;
 
       removeComment(comment_id)
-        .then((comment) => {
-          res.status(204).send({ comment });
+        .then(() => {
+          res.status(204).send();
         })
         .catch((err) => {
           next(err);

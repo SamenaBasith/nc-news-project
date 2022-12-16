@@ -141,8 +141,6 @@ exports.addComment = (article_id, username, body) => {
               });
       };
 
-      
-
       exports.removeComment = (comment_id) => {
 
         querySQL =  
@@ -162,3 +160,6 @@ exports.addComment = (article_id, username, body) => {
             return rows;
           });
       };
+      
+
+
