@@ -446,6 +446,27 @@ describe("GET /api/articles/:article_id QUERY (comment count)",() => {
           );
         });
       });
-  });
+
+  test("status200: responds with an object which contains the article and how many comments it has- this test is checking to see function works for an article with no comments",() => {
+    return request(app)
+    .get('/api/articles/4')
+    .expect(200)
+    .then((res) => {
+      const article = res.body.article;
+        expect(article).toEqual(
+            expect.objectContaining({
+              author: "rogersop",
+              article_id: 4,
+              title: "Student SUES Mitch!",
+              topic: "mitch",
+              created_at: "2020-05-06T01:14:00.000Z",
+              votes: 0,
+              comment_count: "0"
+          })
+        );
+      });
+    });
+});
+
  
  
