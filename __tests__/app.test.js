@@ -424,3 +424,49 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+//get articles/article_id refactored
+describe("GET /api/articles/:article_id QUERY (comment count)",() => {
+  test("status200: responds with an object which contains the article and how many comments it has",() => {
+      return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then((res) => {
+        const article = res.body.article;
+          expect(article).toEqual(
+              expect.objectContaining({
+                author: "butter_bridge",
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 100,
+                comment_count: "11"
+            })
+          );
+        });
+      });
+
+  test("status200: responds with an object which contains the article and how many comments it has- this test is checking to see function works for an article with no comments",() => {
+    return request(app)
+    .get('/api/articles/4')
+    .expect(200)
+    .then((res) => {
+      const article = res.body.article;
+        expect(article).toEqual(
+            expect.objectContaining({
+              author: "rogersop",
+              article_id: 4,
+              title: "Student SUES Mitch!",
+              topic: "mitch",
+              created_at: "2020-05-06T01:14:00.000Z",
+              votes: 0,
+              comment_count: "0"
+          })
+        );
+      });
+    });
+});
+
+ 
+ 

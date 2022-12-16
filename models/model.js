@@ -65,8 +65,17 @@ AS comment_count
 exports.selectArticlesById = (article_id) => {
 
 let querySQL = 
-`SELECT * FROM articles 
-WHERE article_id = $1;`
+
+
+`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
+COUNT(comments.comment_id)
+AS comment_count
+FROM articles
+LEFT JOIN
+comments
+USING(article_id)
+WHERE article_id = $1
+GROUP BY articles.article_id`
 
     return db.query(
         querySQL,[article_id])
