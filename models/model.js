@@ -150,6 +150,25 @@ exports.addComment = (article_id, username, body) => {
               });
       };
 
-      
+
+      exports.removeComment = (comment_id) => {
+
+        querySQL =  
+        `DELETE FROM comments 
+        WHERE comment_id = $1 
+        RETURNING *;`
+        
+        const queryValue = [comment_id]
+
+        return db
+          .query(querySQL, queryValue)
+          .then(({ rows }) => {
+            if (rows.length === 0) {
+              return Promise.reject(
+                {status: 404, msg: "not found"});
+            }
+            return rows;
+          });
+      };
 
 

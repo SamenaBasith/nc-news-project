@@ -1,4 +1,4 @@
-const {selectUsers, selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
+const {removeComment, selectUsers, selectPatchedArticle, addComment, selectComments, selectTopics, selectArticles, selectArticlesById} = require("../models/model.js");
 const app = require('../app.js')
 
 exports.getApi = (req, res) => {
@@ -89,4 +89,15 @@ exports.getApi = (req, res) => {
     };
     
     
-    
+       
+    exports.deleteComment = (req, res, next) => {
+      const { comment_id } = req.params;
+
+      removeComment(comment_id)
+        .then(() => {
+          res.status(204).send();
+        })
+        .catch((err) => {
+          next(err);
+        });
+    };

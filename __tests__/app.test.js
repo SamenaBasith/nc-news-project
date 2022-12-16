@@ -468,5 +468,58 @@ describe("GET /api/articles/:article_id QUERY (comment count)",() => {
     });
 });
 
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("status204: responds with no content message when passed existing and valid comment_id", () => {
+    return request(app)
+    .delete("/api/comments/1").
+    expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({})
+      expect(response.res.statusMessage).toEqual("No Content");
+      
+    });;
+  });
+
+  test("status204: checking that number of comments for that comment_id decreases using a GET request", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((res) => {
+        const comments = res.body.comments
+        expect(comments).toHaveLength(11);
+
+        return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+      })
+      .then(() => {
+        return request(app)
+        .get("/api/articles/1/comments");
+      })
+      .then((res) => {
+        const commentsAfterDeletion = res.body.comments
+        expect(commentsAfterDeletion).toHaveLength(10);
+      });
+  });
+
+  test("error status400: responds with bad request message when passed invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: invalid input");
+      });
+  });
+
+  test("error status404: responds with not found message when passed non existing comment_id but valid data type", () => {
+    return request(app)
+      .delete("/api/comments/12345")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
  
  
