@@ -11,6 +11,9 @@ exports.getApi = (req, res) => {
     .then((topics) => {
         res.status(200).send({ topics });
     })
+    .catch((err) => {
+      next(err)
+    });
   }
 
   exports.getArticles = (req, res, next) => {
@@ -24,26 +27,13 @@ exports.getApi = (req, res) => {
         res.status(200).send({ articles });
     })
     .catch((err) => {
+      console.log(err)
       next(err)
     });
   }
 
   
-//   exports.getArticles = (req, res, next) =>{
-//     const {category, sort_by, order} = req.query;
-//     promises = [selectTopics(), topic, sort_by, order];
 
-//     Promise.all(promises)
-//     .then((promises)=>{
-//         return selectArticles(promises);
-//     })
-//     .then((articles)=>{
-//         res.status(200).send({articles});
-//     })
-//     .catch((err)=>{
-//         next(err);
-//     })
-// }
 
   
  

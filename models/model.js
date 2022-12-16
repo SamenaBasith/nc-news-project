@@ -44,6 +44,7 @@ AS comment_count
   if (validColumns.includes(sort_by)) {
     querySQL += ` ORDER BY ${sort_by}`;
     } else {
+      console.log("sort")
     return Promise.reject({
         status: 400,
         msg: "Bad Request",
@@ -53,6 +54,7 @@ AS comment_count
       if (validOrder.includes(order)) {
         querySQL += ` ${order};`;
       } else {
+        console.log("order")
       return Promise.reject({
         status: 400,
         msg: "Bad Request",

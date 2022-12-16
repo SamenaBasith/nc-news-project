@@ -49,10 +49,9 @@ describe("GET /api/topics", () => {
         });
       });
   });
-})
+});
 
-
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("GET status200 returns an array of article objects with these properties", () => {
     return request(app)
       .get("/api/articles")
@@ -90,18 +89,18 @@ describe.only("GET /api/articles", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
-      .then(({ body: {articles} }) => {
+      .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(1);
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
-              topic: "cats"
+              topic: "cats",
             })
           );
         });
-      })
-    })
-    
+      });
+  });
+
   test("status200 accept QUERY comment_count returns number of comments linked to each article", () => {
     return request(app)
       .get("/api/articles")
@@ -112,18 +111,15 @@ describe.only("GET /api/articles", () => {
       });
   });
 
-
-  
   //errors
-
-test("status404: responds with a not found message when a topic that doesnt exist is passed", () => {
-  return request(app)
-    .get("/api/articles?topic=banana")
-    .expect(404)
-    .then(({ body: { msg } }) => {
-      expect(msg).toBe("not found");
-    });
-  })
+  test("status404: responds with a not found message when a topic that doesnt exist is passed", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
 
   test.only("status400 if bad request given: when invalid column given ", () => {
     return request(app)
@@ -142,8 +138,7 @@ test("status404: responds with a not found message when a topic that doesnt exis
         expect(msg).toBe("Bad Request");
       });
   });
-})
-
+});
 
 describe("GET /api/articles/:article_id", () => {
   test("GET status200 returns an article object corressponding to the article_id passed", () => {
@@ -243,31 +238,29 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 
   test("status201: just checking if the user passes in an extra vote key, it is ignored ", () => {
-        
     const newComment = {
       username: "butter_bridge",
       body: "this article is great!",
-      votes: 200
+      votes: 200,
     };
     return request(app)
-    .post("/api/articles/1/comments")
-    .send(newComment)
-    .expect(201)
-    .then(({ body }) => {
-      expect(body.newComment).toEqual(
-        expect.objectContaining({
-          comment_id: expect.any(Number),
-          body: "this article is great!",
-          author: "butter_bridge",
-          article_id: 1,
-          votes: expect.any(Number),
-          created_at: expect.any(String),
-        })
-      );
-    });
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newComment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: "this article is great!",
+            author: "butter_bridge",
+            article_id: 1,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
 });
-})
-
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("status201: responds with the newly posted comment for the given article_id when passed a valid article_id and a comment object", () => {
@@ -403,8 +396,6 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-
-
   test("error status400: responds with a bad request message when passed an invalid type for inc_votes like a string", () => {
     const updatedVote = { inc_votes: "banana" };
     return request(app)
@@ -439,13 +430,12 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-
 describe("GET /api/users", () => {
   test("status200: responds with an object with a key called users, and an array in that object with all the users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({ body: {users} }) => {
+      .then(({ body: { users } }) => {
         expect(users).toHaveLength(4);
         users.forEach((user) => {
           expect(user).toMatchObject({
