@@ -421,10 +421,14 @@ describe("GET /api/users", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-  test("status204: responds with no content when passed existing and valid comment_id", () => {
+  test("status204: responds with no content message when passed existing and valid comment_id", () => {
     return request(app)
     .delete("/api/comments/1").
-    expect(204);
+    expect(204)
+    .then((response) => {
+      console.log(response.res)
+      expect(response.res.statusMessage).toEqual("No Content");
+    });;
   });
 
   test("status204: checking that number of comments for that comment_id decreases using a GET request", () => {
