@@ -6,15 +6,8 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
-  let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
-COUNT(comments.article_id) 
-AS comment_count
-  FROM articles
-  LEFT JOIN comments
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id`;
-
+exports.selectArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
+  const validOrder = ["desc", "asc", "DESC", "ASC"];
   const validColumns = [
     "article_id",
     "title",
@@ -24,33 +17,34 @@ AS comment_count
     "votes",
   ];
 
-  const validOrder = ["asc", "ASC", "desc", "DESC"];
+  let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
+COUNT(comments.article_id) 
+AS comment_count
+  FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id `;
 
-  const queryValues = [];
+  let queryValues = [];
+
+  if (!validOrder.includes(order_by)) {
+    return Promise.reject(
+      { status: 400, msg: "Bad Request" });
+  }
+
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject(
+      { status: 400, msg: "Bad Request" });
+  }
 
   if (topic !== undefined) {
-    querySQL += ` WHERE topic = $1`;
+    querySQL += `WHERE topic = $1 `;
     queryValues.push(topic);
   }
+  querySQL += `GROUP BY articles.article_id
+  ORDER BY articles.${sort_by} ${order_by};`;
 
-  if (validColumns.includes(sort_by)) {
-    querySQL += ` ORDER BY ${sort_by}`;
-  } else {
-    return Promise.reject({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
-
-  if (validOrder.includes(order)) {
-    querySQL += ` ${order};`;
-  } else {
-    return Promise.reject({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
-  return db.query(querySQL, queryValues).then((result) => {
+  return db.query(querySQL, queryValues)
+  .then((result) => {
     return result.rows;
   });
 };
