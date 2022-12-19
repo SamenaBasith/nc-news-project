@@ -101,6 +101,30 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test('status200: accepts QUERY topics for a valid topic that exists in database but has no information ', () => {
+    return request(app)
+    .get('/api/articles?topic=paper')
+    .expect(200)
+    .then(({body : {articles}})=> {
+        expect(articles).toHaveLength(0)
+        articles.forEach((article) => {
+            expect(article).toEqual(
+                expect.objectContaining({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    comment_count: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number)
+                })
+            )
+    })
+        
+   })
+})
+
+
   test("status200 accept QUERY comment_count returns number of comments linked to each article", () => {
     return request(app)
       .get("/api/articles")
@@ -121,7 +145,7 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test.only("status400 if bad request given: when invalid column given ", () => {
+  test("status400 if bad request given: when invalid column given ", () => {
     return request(app)
       .get("/api/articles?sort_by=sausage")
       .expect(400)
@@ -132,7 +156,7 @@ describe("GET /api/articles", () => {
 
   test("error status400 if bad request given: when invalid order given ", () => {
     return request(app)
-      .get("/api/articles?order=banana")
+      .get("/api/articles?order_by=banana")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request");

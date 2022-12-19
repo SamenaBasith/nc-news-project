@@ -1,157 +1,108 @@
 const db = require("../db/connection.js");
-const {checkTopicExists} = require ("../utility.js")
+const { checkTopicExists } = require("../utility.js");
 
 exports.selectTopics = () => {
-
-  return db
-  .query(`SELECT * FROM topics;`)
-  .then((result) => {
+  return db.query(`SELECT * FROM topics;`).then((result) => {
     return result.rows;
   });
-}
+};
 
+exports.selectArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
+  const validOrder = ["desc", "asc", "DESC", "ASC"];
+  const validColumns = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+  ];
 
-  
-exports.selectArticles = ( sort_by = "created_at",
-order = "DESC", topic) => {
-  
-let querySQL = 
-`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
+  let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
 COUNT(comments.article_id) 
 AS comment_count
   FROM articles
   LEFT JOIN comments
-  ON articles.article_id = comments.article_id`
+  ON articles.article_id = comments.article_id `;
 
-  const validColumns = [  
-  "article_id",
-  "title",
-  "topic",
-  "author",
-  "created_at",
-  "votes"]
+  let queryValues = [];
 
-  const validOrder = ["asc", "ASC", "desc", "DESC"]
-  const queryValues = []
+  if (!validOrder.includes(order_by)) {
+    return Promise.reject(
+      { status: 400, msg: "Bad Request" });
+  }
 
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject(
+      { status: 400, msg: "Bad Request" });
+  }
 
-    if (topic !== undefined) {
-      querySQL += ` WHERE topic = $1`;
+  if (topic !== undefined) {
+    querySQL += `WHERE topic = $1 `;
     queryValues.push(topic);
-     }
-   querySQL += ` GROUP BY articles.article_id`;
-    
-  if (validColumns.includes(sort_by)) {
-    querySQL += ` ORDER BY ${sort_by}`;
-    } else {
-      console.log("sort")
-    return Promise.reject({
-        status: 400,
-        msg: "Bad Request",
-      });
-    }
+  }
+  querySQL += `GROUP BY articles.article_id
+  ORDER BY articles.${sort_by} ${order_by};`;
 
-      if (validOrder.includes(order)) {
-        querySQL += ` ${order};`;
-      } else {
-        console.log("order")
-      return Promise.reject({
-        status: 400,
-        msg: "Bad Request",
-      });
-    }
-   
-  return db
-  .query(querySQL, queryValues)
-  .then((result) => {
-    if (result.rows.length === 0){
-      checkTopicExists(topic)
-    }
-    return result.rows;
+  return db.query(querySQL, queryValues)
+  .then(({ rows }) => {
+    return rows;
   });
-}
-
-
+};
 
 exports.selectArticlesById = (article_id) => {
+  let querySQL = `SELECT * FROM articles 
+WHERE article_id = $1;`;
 
-let querySQL = 
-`SELECT * FROM articles 
-WHERE article_id = $1;`
-
-    return db.query(
-        querySQL,[article_id])
-   .then(({rows}) => {
-        if (rows.length === 0) {
-            return Promise.reject(
-                {status: 404, msg: "not found"})
-        } else { 
-            return rows[0];
-        }
-   })
-}
+  return db.query(querySQL, [article_id]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    } else {
+      return rows[0];
+    }
+  });
+};
 
 exports.selectComments = (article_id) => {
-
-    let querySQL = `SELECT * FROM comments 
+  let querySQL = `SELECT * FROM comments 
     WHERE article_id=$1 
-    ORDER BY created_at DESC;`
+    ORDER BY created_at DESC;`;
 
-    return db.query( querySQL,[article_id])
-    .then(({rows}) => {
-         return rows;
-        });
-      };
-
+  return db.query(querySQL, [article_id]).then(({ rows }) => {
+    return rows;
+  });
+};
 
 exports.addComment = (article_id, username, body) => {
-
-
-    const input = [article_id, body, username]
-        const querySQL = 
-            `INSERT INTO comments 
+  const input = [article_id, body, username];
+  const querySQL = `INSERT INTO comments 
             (article_id, body, author)
              VALUES ($1, $2, $3)
              RETURNING *;`;
 
+  return db.query(querySQL, input).then((result) => {
+    return result.rows[0];
+  });
+};
 
-        return db
-        .query(querySQL, input)
-        .then((result) => {
-          return result.rows[0];
-        });
-      };
-    
-      exports.selectPatchedArticle = (article_id, inc_votes) => {
-  
-        const updatedVote = [inc_votes, article_id];
-        const querySQL = `
+exports.selectPatchedArticle = (article_id, inc_votes) => {
+  const updatedVote = [inc_votes, article_id];
+  const querySQL = `
               UPDATE articles 
               SET votes = votes + $1 
               WHERE article_id = $2 
               RETURNING *;`;
-            
-      
-        return db.query(querySQL, updatedVote).then((result) => {
-          if (result.rowCount === 0) {
-            return Promise.reject( 
-              {status: 404, msg: "not found"} )
-        }
-          return result.rows[0];
-        });
-      };
 
+  return db.query(querySQL, updatedVote).then((result) => {
+    if (result.rowCount === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return result.rows[0];
+  });
+};
 
-
-      exports.selectUsers = () => {
-
-          return db 
-              .query(`SELECT * FROM users;`)
-              .then((result) => {
-                  return result.rows;
-              });
-      };
-
-      
-
-
+exports.selectUsers = () => {
+  return db.query(`SELECT * FROM users;`).then((result) => {
+    return result.rows;
+  });
+};

@@ -16,26 +16,22 @@ exports.getApi = (req, res) => {
     });
   }
 
+  
   exports.getArticles = (req, res, next) => {
-    const { sort_by, order, topic } = req.query;
+    const { sort_by, order_by, topic } = req.query;
+    
     const promises = [checkTopicExists(topic),
-       selectArticles(sort_by, order, topic)]
+        selectArticles(topic, sort_by, order_by)]
 
     Promise.all(promises)
-    .then((result) => {
-    let articles = result[1]
-        res.status(200).send({ articles });
+    .then(([topic_exists, articles]) => {
+        res.status(200).send({articles})
     })
     .catch((err) => {
-      console.log(err)
-      next(err)
-    });
-  }
+        next(err)
+    })
 
-  
-
-
-  
+}
  
     
 
