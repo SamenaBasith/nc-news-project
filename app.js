@@ -1,10 +1,13 @@
 const { deleteComment, getUsers,patchArticle, postComment,getComments,getArticlesById,getArticles,getTopics, getApi } = require("./controllers/controller.js");
 const { PSQLErrorHandler, errorHandler404, customErrorHandler, errorHandler500} = require("./controllers/errors.controllers.js");
+const cors = require('cors');
 
 const express = require("express");
 const app = express();
 
 //endpoints
+app.use(cors());
+
 app.get("/api", getApi);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles)
