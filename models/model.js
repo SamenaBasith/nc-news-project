@@ -50,7 +50,7 @@ AS comment_count
 };
 
 exports.selectArticlesById = (article_id) => {
-  let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
+  let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, articles.body,
 COUNT(comments.comment_id)
 AS comment_count
 FROM articles

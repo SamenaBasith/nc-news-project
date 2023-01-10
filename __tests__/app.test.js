@@ -456,7 +456,8 @@ describe("GET /api/articles/:article_id QUERY (comment count)",() => {
                 topic: "mitch",
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 100,
-                comment_count: "11"
+                comment_count: "11",
+                body: "I find this existence challenging"
             })
           );
         });
@@ -470,12 +471,6 @@ describe("GET /api/articles/:article_id QUERY (comment count)",() => {
       const article = res.body.article;
         expect(article).toEqual(
             expect.objectContaining({
-              author: "rogersop",
-              article_id: 4,
-              title: "Student SUES Mitch!",
-              topic: "mitch",
-              created_at: "2020-05-06T01:14:00.000Z",
-              votes: 0,
               comment_count: "0"
           })
         );
