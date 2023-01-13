@@ -77,7 +77,7 @@ describe("GET /api/articles", () => {
 
   test("status200 QUERY accepted articles sorted by columns created_at defaulted by DESC order", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at&order=DESC")
+      .get("/api/articles?sort_by=created_at&order_by=DESC")
       .expect(200)
       .then((res) => {
         const articles = res.body.articles;
