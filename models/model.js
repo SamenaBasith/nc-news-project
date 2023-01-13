@@ -15,6 +15,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
     "author",
     "created_at",
     "votes",
+    "comment_count"
   ];
 
   let querySQL = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes,
