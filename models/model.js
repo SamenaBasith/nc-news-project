@@ -42,7 +42,7 @@ AS comment_count
     queryValues.push(topic);
   }
   querySQL += `GROUP BY articles.article_id
-  ORDER BY articles.${sort_by} ${order_by};`;
+  ORDER BY ${sort_by} ${order_by};`;
 
   return db.query(querySQL, queryValues)
   .then((result) => {
